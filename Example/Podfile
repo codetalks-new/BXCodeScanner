@@ -1,0 +1,12 @@
+source 'https://github.com/CocoaPods/Specs.git'
+use_frameworks!
+
+target 'BXCodeScanner_Example', :exclusive => true do
+  pod "BXCodeScanner", :path => "../"
+end
+
+target 'BXCodeScanner_Tests', :exclusive => true do
+  pod "BXCodeScanner", :path => "../"
+
+  
+end
