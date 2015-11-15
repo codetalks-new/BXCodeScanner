@@ -388,10 +388,9 @@ public class BXReceiptScanViewController: UIViewController {
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         NSLog("\(__FUNCTION__)")
-       updateRectOfInterest()
     }
     
-    func updateRectOfInterest(){
+    func rectOfInterest() -> CGRect{
         let bounds = self.view.bounds
         let rect = scanFeedbackView.frame
         let x  = rect.origin.x / bounds.width
@@ -399,6 +398,7 @@ public class BXReceiptScanViewController: UIViewController {
         let w = rect.width / bounds.width
         let h = rect.height / bounds.height
         let interestRest = CGRect(x: x, y: y, width: w, height: h)
+        return interestRest
         
     }
 
