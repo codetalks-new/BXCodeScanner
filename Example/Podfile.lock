@@ -1,0 +1,17 @@
+PODS:
+  - BXCodeScanner (0.1.0):
+    - PinAutoLayout
+  - PinAutoLayout (1.0.1)
+
+DEPENDENCIES:
+  - BXCodeScanner (from `../`)
+
+EXTERNAL SOURCES:
+  BXCodeScanner:
+    :path: ../
+
+SPEC CHECKSUMS:
+  BXCodeScanner: ee808a9844ecabcb541410b7da458f9c4869148b
+  PinAutoLayout: ab4a1a9cdd9f2b6b1ea8371c8384be1164b0865e
+
+COCOAPODS: 0.39.0

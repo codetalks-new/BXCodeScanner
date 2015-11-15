@@ -1,0 +1,30 @@
+{
+  "name": "BXCodeScanner",
+  "version": "0.1.0",
+  "summary": "A short description of BXCodeScanner.",
+  "description": "",
+  "homepage": "https://github.com/<GITHUB_USERNAME>/BXCodeScanner",
+  "license": "MIT",
+  "authors": {
+    "banxi1988": "banxi1988@gmail.com"
+  },
+  "source": {
+    "git": "https://github.com/<GITHUB_USERNAME>/BXCodeScanner.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "requires_arc": true,
+  "source_files": "Pod/Classes/**/*",
+  "resource_bundles": {
+    "BXCodeScanner": [
+      "Pod/Assets/*.png"
+    ]
+  },
+  "dependencies": {
+    "PinAutoLayout": [
+
+    ]
+  }
+}
