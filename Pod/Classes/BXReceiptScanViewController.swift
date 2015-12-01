@@ -25,8 +25,8 @@ public class BXReceiptScanViewController: UIViewController {
         super.init(coder: aDecoder)
     }
     
-    let scanFeedbackView = BXScanFeedbackView()
-    let scanTipLabel = UILabel()
+    public let scanFeedbackView = BXScanFeedbackView()
+    public let scanTipLabel = UILabel()
     
     public let cameraButton = UIButton(type: .System)
     public let flashButton = UIButton(type: .System)
@@ -83,12 +83,16 @@ public class BXReceiptScanViewController: UIViewController {
 
         
         showExampleButton.pinCenterY()
+        showExampleButton.pinWidth(64)
+        showExampleButton.pinAspectRatio(1)
         showExampleButton.pinLeading()
         flashButton.pinCenterXToSibling(showExampleButton)
         flashButton.pinBelowSibling(showExampleButton, margin: 16)
         
         cameraButton.pinCenterY()
         cameraButton.pinTrailing()
+        cameraButton.pinWidth(64)
+        cameraButton.pinAspectRatio(1)
         cancelButton.pinCenterXToSibling(cameraButton)
         cancelButton.pinBelowSibling(cameraButton, margin: 16)
        

@@ -40,6 +40,17 @@ public class BXScanFeedbackView:UIView{
             scanLineLayer.hidden = newValue
         }
     }
+  public var cornerLength :CGFloat = 16{
+    didSet{
+      setNeedsDisplay()
+    }
+  }
+  
+  public var showOutline = true{
+    didSet{
+      setNeedsDisplay()
+    }
+  }
     
     func commonInit(){
         backgroundColor = .clearColor()
@@ -118,14 +129,15 @@ public class BXScanFeedbackView:UIView{
     
     override public func drawRect(rect: CGRect) {
         super.drawRect(rect)
-        let outlineRect = rect.insetBy(dx: 1, dy: 1)
-        let outlinePath = UIBezierPath(rect: outlineRect)
-        outlinePath.lineWidth = 1.0
-        UIColor.whiteColor().setStroke()
-        outlinePath.stroke()
-        
-        UIColor.redColor().set()
-        let cornerLength :CGFloat = 16
+        if showOutline{
+          let outlineRect = rect.insetBy(dx: 1, dy: 1)
+          let outlinePath = UIBezierPath(rect: outlineRect)
+          outlinePath.lineWidth = 1.0
+          UIColor.whiteColor().setStroke()
+          outlinePath.stroke()
+        }
+      
+        tintColor.set()
         let ctx = UIGraphicsGetCurrentContext()
         let cornerArray :[(startPoint:CGPoint,firstLineMul:CGPoint,secondLineMul:CGPoint)] = [
             (rect.upLeftPoint,CGPoint(x: 1, y: 0),CGPoint(x: 0, y: 1)),
@@ -149,5 +161,10 @@ public class BXScanFeedbackView:UIView{
             CGContextStrokePath(ctx)
         }
     }
+  
+  public override func tintColorDidChange() {
+    super.tintColorDidChange()
+    setNeedsDisplay()
+  }
     
 }

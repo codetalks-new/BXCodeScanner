@@ -63,7 +63,7 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
     
     func installConstraints(){
         scanTipLabel.pinCenterX()
-        pinBottomLayoutGuide(scanTipLabel, withMargin: 8)
+        pinBottomLayoutGuide(scanTipLabel, margin: 8)
         pinEdge(previewView)
         scanFeedbackView.pinCenter()
         scanFeedbackView.pinSize(scanRectSize)
