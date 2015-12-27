@@ -345,7 +345,7 @@ public class BXReceiptScanViewController: UIViewController {
     // MARK: Landscape Support
     
     public override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        return .LandscapeLeft
+        return .Landscape
     }
     
     public override func shouldAutorotate() -> Bool {

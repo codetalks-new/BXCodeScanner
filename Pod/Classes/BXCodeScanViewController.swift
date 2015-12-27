@@ -39,12 +39,20 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
     }
     
     var restartButtonItem : UIBarButtonItem?
-    let scanFeedbackView = BXScanFeedbackView()
-    let scanTipLabel = UILabel()
+    public let scanFeedbackView = BXScanFeedbackView()
+    public lazy var scanTipLabel: UILabel = {
+        let label = UILabel(frame: CGRectZero)
+        label.text = BXStrings.scan_tip
+        label.textColor = .whiteColor()
+        label.font = UIFont.boldSystemFontOfSize(18)
+        return label
+    }()
     
     // MARK: Customize Property
-    public var scanRectSize = CGSize(width: 200, height: 200)
+    public var scanRectSize = CGSize(width: 208, height: 208)
     public var scanCodeType = AVMetadataObjectTypeQRCode
+    public var tipsOnTop = true
+    public var tipsMargin :CGFloat = 40
     
     public weak var delegate:BXCodeScanViewControllerDelegate?
     public override func loadView() {
@@ -54,19 +62,21 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
                 childView.translatesAutoresizingMaskIntoConstraints = false
         }
         // Setup
-        scanTipLabel.text = BXStrings.scan_tip
-        scanTipLabel.textColor = .whiteColor()
-        scanTipLabel.font = UIFont.boldSystemFontOfSize(18)
+
         
         installConstraints()
     }
     
     func installConstraints(){
         scanTipLabel.pinCenterX()
-        pinBottomLayoutGuide(scanTipLabel, margin: 8)
         pinEdge(previewView)
         scanFeedbackView.pinCenter()
         scanFeedbackView.pinSize(scanRectSize)
+      if tipsOnTop{
+        scanTipLabel.pinAboveSibling(scanFeedbackView, margin: 40)
+      }else{
+        scanTipLabel.pinBelowSibling(scanFeedbackView, margin: 40)
+      }
         
     }
     
@@ -96,7 +106,6 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
         previewView.previewLayer?.videoGravity = AVLayerVideoGravityResizeAspectFill
        
         // UI
-        scanTipLabel.textColor = UIColor.whiteColor()
         let cancelButton = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: "cancel:")
         navigationItem.rightBarButtonItem = cancelButton
         
@@ -341,11 +350,10 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
     }
     
     func closeSelf(){
-        if let navCtrl = self.navigationController{
-            navCtrl.popViewControllerAnimated(true)
-        }else{
-            dismissViewControllerAnimated(true, completion: nil)
-        }
+      let poped = self.navigationController?.popViewControllerAnimated(true)
+      if poped == nil{
+        dismissViewControllerAnimated(true, completion: nil)
+      }
     }
     
 

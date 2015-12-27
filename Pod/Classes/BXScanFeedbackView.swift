@@ -27,7 +27,7 @@ extension CGRect{
 }
 
 public class BXScanFeedbackView:UIView{
-    let scanLineLayer = CAShapeLayer()
+   public let scanLineLayer = CAShapeLayer()
     override init(frame:CGRect){
         super.init(frame: frame)
         commonInit()
@@ -40,7 +40,7 @@ public class BXScanFeedbackView:UIView{
             scanLineLayer.hidden = newValue
         }
     }
-  public var cornerLength :CGFloat = 16{
+  public var cornerLength :CGFloat = 30{
     didSet{
       setNeedsDisplay()
     }
