@@ -10,7 +10,7 @@ import PinAutoLayout
 
 // For Tool convient method
 public extension UIViewController{
-    func openCodeScanViewControllerWithDelegate(delegate:BXCodeScanViewControllerDelegate?){
+   public func openCodeScanViewControllerWithDelegate(delegate:BXCodeScanViewControllerDelegate?){
         let vc = BXCodeScanViewController()
         vc.delegate = delegate
         let nvc = UINavigationController(rootViewController: vc)
@@ -50,7 +50,13 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
     
     // MARK: Customize Property
     public var scanRectSize = CGSize(width: 208, height: 208)
-    public var scanCodeType = AVMetadataObjectTypeQRCode
+    public var scanCodeTypes = [
+      AVMetadataObjectTypeQRCode,
+      AVMetadataObjectTypeAztecCode,
+      AVMetadataObjectTypeDataMatrixCode,
+  ]
+  
+  
     public var tipsOnTop = true
     public var tipsMargin :CGFloat = 40
     
@@ -159,10 +165,10 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
                 let queue = dispatch_queue_create("myScanOutputQueue", DISPATCH_QUEUE_SERIAL)
                 metadataOutput.setMetadataObjectsDelegate(self, queue: queue)
                 self.session.addOutput(metadataOutput)
-                let types = metadataOutput.availableMetadataObjectTypes
-                let qrcodeTypeAvailable =  types.contains{ $0 as! String == self.scanCodeType }
-                if qrcodeTypeAvailable{
-                    metadataOutput.metadataObjectTypes = [self.scanCodeType]
+              let types: [String] = metadataOutput.availableMetadataObjectTypes as? [String] ?? []
+              let availableTypes =  self.scanCodeTypes.filter{types.contains($0)}
+                if availableTypes.count > 0{
+                    metadataOutput.metadataObjectTypes = availableTypes
                 }else{
                     NSLog("QRCode metadataObjectType is not available ,available types \(types)")
                     self.setupResult = .SessionconfigurationFailed
@@ -176,7 +182,7 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
                 let h = self.scanRectSize.height / bounds.height
                 let interestRect = CGRect(x: x, y: y, width: w, height: h)
                 NSLog("rectOfInterest \(interestRect)")
-                metadataOutput.rectOfInterest = interestRect
+//                metadataOutput.rectOfInterest = interestRect
             }else{
                 NSLog("Could not add metadata output to the session")
                 self.setupResult = BXCodeSetupResult.SessionconfigurationFailed
@@ -324,8 +330,8 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
     var isRecognized = false
     public func captureOutput(captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [AnyObject]!, fromConnection connection: AVCaptureConnection!) {
         if let metadataObject = metadataObjects.first as? AVMetadataMachineReadableCodeObject
-            where metadataObject.type == self.scanCodeType{
-                NSLog("scan result \(metadataObject.stringValue)")
+            where self.scanCodeTypes.contains(metadataObject.type){
+                NSLog("scan result type:\(metadataObject.type) content:\(metadataObject.stringValue)")
                 self.stopScanning()
                 // 如果不在这里马上停止,那么此结果,因为扫描成功之后,还会有多次回调.
                 if isRecognized{
