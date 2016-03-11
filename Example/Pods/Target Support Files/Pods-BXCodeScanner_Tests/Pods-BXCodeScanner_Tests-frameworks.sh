@@ -84,10 +84,10 @@ strip_invalid_archs() {
 
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_framework "Pods-BXCodeScanner_Tests/BXCodeScanner.framework"
-  install_framework "Pods-BXCodeScanner_Tests/PinAutoLayout.framework"
+  install_framework "$CONFIGURATION_BUILD_DIR/BXCodeScanner/BXCodeScanner.framework"
+  install_framework "$CONFIGURATION_BUILD_DIR/PinAutoLayout/PinAutoLayout.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_framework "Pods-BXCodeScanner_Tests/BXCodeScanner.framework"
-  install_framework "Pods-BXCodeScanner_Tests/PinAutoLayout.framework"
+  install_framework "$CONFIGURATION_BUILD_DIR/BXCodeScanner/BXCodeScanner.framework"
+  install_framework "$CONFIGURATION_BUILD_DIR/PinAutoLayout/PinAutoLayout.framework"
 fi

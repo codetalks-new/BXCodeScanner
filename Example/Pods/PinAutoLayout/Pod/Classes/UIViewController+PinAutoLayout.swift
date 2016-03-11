@@ -14,14 +14,14 @@ extension UIViewController{
         assert(pa_contains(view), "NO such child View \(view)")
     }
     
-    public func pinTopLayoutGuide(view:UIView,withMargin margin : CGFloat = 0) -> NSLayoutConstraint{
+    public func pinTopLayoutGuide(view:UIView,margin : CGFloat = 0) -> NSLayoutConstraint{
         assertHasSubview(view)
         let topC = NSLayoutConstraint(item: view, attribute: .Top, relatedBy: .Equal, toItem: topLayoutGuide, attribute: .Bottom, multiplier: 1.0, constant: margin)
         self.view.addConstraint(topC)
         return topC
     }
     
-    public func pinBottomLayoutGuide(view:UIView,withMargin margin : CGFloat = 0) -> NSLayoutConstraint{
+    public func pinBottomLayoutGuide(view:UIView,margin : CGFloat = 0) -> NSLayoutConstraint{
         assertHasSubview(view)
         let bottomC = NSLayoutConstraint(item: view, attribute: .Bottom, relatedBy: .Equal, toItem: bottomLayoutGuide, attribute: .Top, multiplier: 1.0, constant: -margin)
         self.view.addConstraint(bottomC)
@@ -32,8 +32,8 @@ extension UIViewController{
         let edgeC = PAEdgeConstraints()
         edgeC.leading =  view.pinLeading(margin.left)
         edgeC.trailing = view.pinTrailing(margin.right)
-        edgeC.top = pinTopLayoutGuide(view,withMargin:margin.top)
-        edgeC.bottom = pinBottomLayoutGuide(view, withMargin: margin.bottom)
+        edgeC.top = pinTopLayoutGuide(view,margin:margin.top)
+        edgeC.bottom = pinBottomLayoutGuide(view, margin: margin.bottom)
         return edgeC
     }
     
