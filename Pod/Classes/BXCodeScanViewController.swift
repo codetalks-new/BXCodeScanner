@@ -6,7 +6,7 @@
 
 import UIKit
 import AVFoundation
-import PinAutoLayout
+import PinAuto
 
 // For Tool convient method
 public extension UIViewController{
@@ -74,14 +74,14 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
     }
     
     func installConstraints(){
-        scanTipLabel.pinCenterX()
-        pinEdge(previewView)
-        scanFeedbackView.pinCenter()
-        scanFeedbackView.pinSize(scanRectSize)
+        scanTipLabel.pa_centerX.install()
+        previewView.pac_edge()
+        scanFeedbackView.pac_center()
+        scanFeedbackView.pac_size(scanRectSize)
       if tipsOnTop{
-        scanTipLabel.pinAboveSibling(scanFeedbackView, margin: 40)
+        scanTipLabel.pa_above(scanFeedbackView, offset: 40).install()
       }else{
-        scanTipLabel.pinBelowSibling(scanFeedbackView, margin: 40)
+        scanTipLabel.pa_below(scanFeedbackView, offset: 40).install()
       }
         
     }
@@ -89,7 +89,7 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
     
     public override func updateViewConstraints() {
         super.updateViewConstraints()
-        NSLog("\(__FUNCTION__)")
+        NSLog("\(#function)")
     }
     
     
@@ -112,7 +112,7 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
         previewView.previewLayer?.videoGravity = AVLayerVideoGravityResizeAspectFill
        
         // UI
-        let cancelButton = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: "cancel:")
+        let cancelButton = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: #selector(BXCodeScanViewController.cancel(_:)))
         navigationItem.rightBarButtonItem = cancelButton
         
         checkAuthorization()

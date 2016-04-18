@@ -166,12 +166,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "BXCodeScanner_Example" */;
 			buildPhases = (
-				C532EABD82C2109083231D05 /* Check Pods Manifest.lock */,
+				C532EABD82C2109083231D05 /* 📦 Check Pods Manifest.lock */,
 				607FACCC1AFB9204008FA782 /* Sources */,
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
-				E1BC1AF8A5AC073CA31FC6AF /* Embed Pods Frameworks */,
-				E21271C47C7A3B73AA708E4C /* Copy Pods Resources */,
+				E1BC1AF8A5AC073CA31FC6AF /* 📦 Embed Pods Frameworks */,
+				E21271C47C7A3B73AA708E4C /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -186,12 +186,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 607FACF21AFB9204008FA782 /* Build configuration list for PBXNativeTarget "BXCodeScanner_Tests" */;
 			buildPhases = (
-				4FB7FE5BB524D6AA76E5E40B /* Check Pods Manifest.lock */,
+				4FB7FE5BB524D6AA76E5E40B /* 📦 Check Pods Manifest.lock */,
 				607FACE11AFB9204008FA782 /* Sources */,
 				607FACE21AFB9204008FA782 /* Frameworks */,
 				607FACE31AFB9204008FA782 /* Resources */,
-				7115E4A31AB816E77A72034D /* Embed Pods Frameworks */,
-				FEA27222D5C534CD0AC862C5 /* Copy Pods Resources */,
+				7115E4A31AB816E77A72034D /* 📦 Embed Pods Frameworks */,
+				FEA27222D5C534CD0AC862C5 /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -262,14 +262,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		4FB7FE5BB524D6AA76E5E40B /* Check Pods Manifest.lock */ = {
+		4FB7FE5BB524D6AA76E5E40B /* 📦 Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "📦 Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -277,14 +277,14 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		7115E4A31AB816E77A72034D /* Embed Pods Frameworks */ = {
+		7115E4A31AB816E77A72034D /* 📦 Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "📦 Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -292,14 +292,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BXCodeScanner_Tests/Pods-BXCodeScanner_Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C532EABD82C2109083231D05 /* Check Pods Manifest.lock */ = {
+		C532EABD82C2109083231D05 /* 📦 Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "📦 Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -307,14 +307,14 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		E1BC1AF8A5AC073CA31FC6AF /* Embed Pods Frameworks */ = {
+		E1BC1AF8A5AC073CA31FC6AF /* 📦 Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "📦 Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -322,14 +322,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BXCodeScanner_Example/Pods-BXCodeScanner_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E21271C47C7A3B73AA708E4C /* Copy Pods Resources */ = {
+		E21271C47C7A3B73AA708E4C /* 📦 Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "📦 Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -337,14 +337,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BXCodeScanner_Example/Pods-BXCodeScanner_Example-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		FEA27222D5C534CD0AC862C5 /* Copy Pods Resources */ = {
+		FEA27222D5C534CD0AC862C5 /* 📦 Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "📦 Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -100,7 +100,7 @@ public class BXScanFeedbackView:UIView{
     var scanLineAnimTimeOffset : CFTimeInterval = 0.0
     var scanLineAnimDuration = 2.0
     func animateScanLineWithDisplayLink(){
-        timer = CADisplayLink(target: self, selector: "scanLineStep")
+        timer = CADisplayLink(target: self, selector: #selector(BXScanFeedbackView.scanLineStep))
 //        timer?.frameInterval = 60 * 2
         scanLineToY = bounds.height
         scanLineLastStepTime = CACurrentMediaTime()

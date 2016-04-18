@@ -1,7 +1,7 @@
 PODS:
-  - BXCodeScanner (0.1.2):
-    - PinAutoLayout
-  - PinAutoLayout (1.1.0)
+  - BXCodeScanner (0.1.4):
+    - PinAuto
+  - PinAuto (1.6)
 
 DEPENDENCIES:
   - BXCodeScanner (from `../`)
@@ -11,9 +11,9 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  BXCodeScanner: 72b9180b3912f62b528c28f25f412e81ea7c4d24
-  PinAutoLayout: 9d0863eed45d1d6277aa663c8a32b77b03a16bf1
+  BXCodeScanner: f2a8600c7af3ae0c18d9a3bad796dbd2a575c653
+  PinAuto: 3fea106a06036fedf49928e65a1bced151c02f8a
 
 PODFILE CHECKSUM: ca7af126c6a1bff08d46950f819edab9ab957a37
 
-COCOAPODS: 1.0.0.beta.4
+COCOAPODS: 1.0.0.beta.8
