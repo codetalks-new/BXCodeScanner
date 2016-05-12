@@ -370,11 +370,11 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
     
     var audioPlayer:AVAudioPlayer?
     func loadQRCodeCompletedSound(){
-        let bundle = NSBundle(forClass: BXCodeScanViewController.self)
-        let bundleURL = bundle.URLForResource("BXCodeScanner", withExtension: "bundle")
-        let assetBundle = NSBundle(URL: bundleURL!)
-        let soundURL = assetBundle!.URLForResource("qrcode_completed", withExtension: "mp3")
-        audioPlayer = try? AVAudioPlayer(contentsOfURL: soundURL!)
+        let assetBundle = NSBundle.mainBundle()
+      guard let soundURL = assetBundle.URLForResource("qrcode_completed", withExtension: "mp3")   else{
+        return
+      }
+        audioPlayer = try? AVAudioPlayer(contentsOfURL: soundURL)
         if audioPlayer == nil{
             NSLog("unable to read qrcode_completed file")
         }else{
