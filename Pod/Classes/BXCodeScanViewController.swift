@@ -10,25 +10,25 @@ import PinAuto
 
 // For Tool convient method
 public extension UIViewController{
-   public func openCodeScanViewControllerWithDelegate(delegate:BXCodeScanViewControllerDelegate?){
+   public func openCodeScanViewControllerWithDelegate(_ delegate:BXCodeScanViewControllerDelegate?){
         let vc = BXCodeScanViewController()
         vc.delegate = delegate
         let nvc = UINavigationController(rootViewController: vc)
-        presentViewController(nvc, animated: true, completion: nil)
+        present(nvc, animated: true, completion: nil)
     }
 }
 
 @objc
 public protocol BXCodeScanViewControllerDelegate{
-    func codeScanViewController(viewController:BXCodeScanViewController,didRecognizeCode code:String)
-    optional func codeScanViewControllerDidCanceled(viewController:BXCodeScanViewController)
+    func codeScanViewController(_ viewController:BXCodeScanViewController,didRecognizeCode code:String)
+    @objc optional func codeScanViewControllerDidCanceled(_ viewController:BXCodeScanViewController)
 }
 
 
 
 
 
-public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputObjectsDelegate {
+open class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputObjectsDelegate {
     
     public init() {
         super.init(nibName: nil, bundle: nil)
@@ -39,29 +39,29 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
     }
     
     var restartButtonItem : UIBarButtonItem?
-    public let scanFeedbackView = BXScanFeedbackView()
-    public lazy var scanTipLabel: UILabel = {
-        let label = UILabel(frame: CGRectZero)
+    open let scanFeedbackView = BXScanFeedbackView()
+    open lazy var scanTipLabel: UILabel = {
+        let label = UILabel(frame: CGRect.zero)
         label.text = BXStrings.scan_tip
-        label.textColor = .whiteColor()
-        label.font = UIFont.boldSystemFontOfSize(18)
+        label.textColor = .white
+        label.font = UIFont.boldSystemFont(ofSize: 18)
         return label
     }()
     
     // MARK: Customize Property
-    public var scanRectSize = CGSize(width: 208, height: 208)
-    public var scanCodeTypes = [
+    open var scanRectSize = CGSize(width: 208, height: 208)
+    open var scanCodeTypes = [
       AVMetadataObjectTypeQRCode,
       AVMetadataObjectTypeAztecCode,
       AVMetadataObjectTypeDataMatrixCode,
   ]
   
   
-    public var tipsOnTop = true
-    public var tipsMargin :CGFloat = 40
+    open var tipsOnTop = true
+    open var tipsMargin :CGFloat = 40
     
-    public weak var delegate:BXCodeScanViewControllerDelegate?
-    public override func loadView() {
+    open weak var delegate:BXCodeScanViewControllerDelegate?
+    open override func loadView() {
         super.loadView()
         for childView in [previewView,scanFeedbackView, scanTipLabel]{
                 self.view.addSubview(childView)
@@ -87,7 +87,7 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
     }
     
     
-    public override func updateViewConstraints() {
+    open override func updateViewConstraints() {
         super.updateViewConstraints()
         NSLog("\(#function)")
     }
@@ -95,41 +95,40 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
     
     // MARK: Scan Support Variable
     let previewView = BXPreviewView()
-    let sessionQueue = dispatch_queue_create("session_queue", DISPATCH_QUEUE_SERIAL)
+    let sessionQueue = DispatchQueue(label: "session_queue", attributes: [])
     var videoDeviceInput:AVCaptureDeviceInput?
     var session = AVCaptureSession()
     var sessionRunning = false
-    var setupResult = BXCodeSetupResult.Success
+    var setupResult = BXCodeSetupResult.success
     
     
-    override public func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
         // prepare
         loadQRCodeCompletedSound()
         // setup session
-        previewView.session = session
-        setupResult = .Success
+        setupResult = .success
         previewView.previewLayer?.videoGravity = AVLayerVideoGravityResizeAspectFill
        
         // UI
-        let cancelButton = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: #selector(BXCodeScanViewController.cancel(_:)))
+        let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(BXCodeScanViewController.cancel(_:)))
         navigationItem.rightBarButtonItem = cancelButton
         
         checkAuthorization()
         setupSession()
     }
     
-    @IBAction func cancel(sender:AnyObject){
+    @IBAction func cancel(_ sender:AnyObject){
         closeSelf()
     }
     
     func setupSession(){
         session_async{
-            if self.setupResult != .Success{
+            if self.setupResult != .success{
                 return
             }
-            guard let videoDevice = self.deviceWithMediaType(AVMediaTypeVideo, preferringPosition: AVCaptureDevicePosition.Back) else {
-                self.setupResult = .NoDevice
+            guard let videoDevice = self.deviceWithMediaType(AVMediaTypeVideo, preferringPosition: AVCaptureDevicePosition.back) else {
+                self.setupResult = .noDevice
                return
             }
             
@@ -146,23 +145,24 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
                 self.videoDeviceInput = videoDeviceInput
                
                 runInUiThread{
-                    let statusBarOrientation = UIApplication.sharedApplication().statusBarOrientation
-                    var initialVideoOrientation = AVCaptureVideoOrientation.Portrait
-                    if statusBarOrientation != .Unknown{
+                    self.previewView.session = self.session
+                    let statusBarOrientation = UIApplication.shared.statusBarOrientation
+                    var initialVideoOrientation = AVCaptureVideoOrientation.portrait
+                    if statusBarOrientation != .unknown{
                        initialVideoOrientation = AVCaptureVideoOrientation(rawValue: statusBarOrientation.rawValue)!
                     }
                     self.previewView.previewLayer?.connection.videoOrientation = initialVideoOrientation
                 }
             }else{
                 NSLog("Could not add video deviceinput to the session")
-                self.setupResult = BXCodeSetupResult.SessionconfigurationFailed
+                self.setupResult = BXCodeSetupResult.sessionconfigurationFailed
             }
             NSLog("session preset \(self.session.sessionPreset)")
             
             
             let metadataOutput = AVCaptureMetadataOutput()
             if self.session.canAddOutput(metadataOutput){
-                let queue = dispatch_queue_create("myScanOutputQueue", DISPATCH_QUEUE_SERIAL)
+                let queue = DispatchQueue(label: "myScanOutputQueue", attributes: [])
                 metadataOutput.setMetadataObjectsDelegate(self, queue: queue)
                 self.session.addOutput(metadataOutput)
               let types: [String] = metadataOutput.availableMetadataObjectTypes as? [String] ?? []
@@ -171,7 +171,7 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
                     metadataOutput.metadataObjectTypes = availableTypes
                 }else{
                     NSLog("QRCode metadataObjectType is not available ,available types \(types)")
-                    self.setupResult = .SessionconfigurationFailed
+                    self.setupResult = .sessionconfigurationFailed
                 }
                 
                 let bounds = self.view.bounds
@@ -185,7 +185,7 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
 //                metadataOutput.rectOfInterest = interestRect
             }else{
                 NSLog("Could not add metadata output to the session")
-                self.setupResult = BXCodeSetupResult.SessionconfigurationFailed
+                self.setupResult = BXCodeSetupResult.sessionconfigurationFailed
             }
             
             self.session.commitConfiguration()
@@ -194,48 +194,48 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
     }
    
     func checkAuthorization(){
-        let status = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
+        let status = AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
         switch status{
-        case .Authorized:
-            if setupResult != .Success{
+        case .authorized:
+            if setupResult != .success{
                 setupSession()
             }
             break
-        case .NotDetermined:
+        case .notDetermined:
             promptAuthorize()
         default:
-            setupResult = .NotAuthorized // Deny or Restricted
+            setupResult = .notAuthorized // Deny or Restricted
         }
     }
     
     func promptAuthorize(){
-        dispatch_suspend(sessionQueue)
-        AVCaptureDevice.requestAccessForMediaType(AVMediaTypeVideo){
+        sessionQueue.suspend()
+        AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo){
             granted in
             if !granted{
-                self.setupResult = BXCodeSetupResult.NotAuthorized
+                self.setupResult = BXCodeSetupResult.notAuthorized
             }
-            dispatch_resume(self.sessionQueue)
+            self.sessionQueue.resume()
         }
     }
     
-    public override func viewWillAppear(animated: Bool) {
+    open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         checkAuthorization() // authorization can be change we we are not in front
-        dispatch_async(self.sessionQueue){
+        self.sessionQueue.async{
             switch self.setupResult{
-            case .Success:
+            case .success:
                 self.session.startRunning()
-                self.sessionRunning = self.session.running
-            case .NotAuthorized:
+                self.sessionRunning = self.session.isRunning
+            case .notAuthorized:
                 runInUiThread{
                     self.promptNotAuthorized()
                 }
-            case .NoDevice:
+            case .noDevice:
                 runInUiThread{
                     self.showTip(BXStrings.error_no_device)
                 }
-            case .SessionconfigurationFailed:
+            case .sessionconfigurationFailed:
                 runInUiThread{
                     self.showTip(BXStrings.error_session_failed)
                 }
@@ -243,16 +243,16 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
         }
     }
     
-    public override func viewDidAppear(animated: Bool) {
+    open override func viewDidAppear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        if self.setupResult == .Success && self.sessionRunning{
+        if self.setupResult == .success && self.sessionRunning{
             startScanningUI()
         }
     }
     
-    public override func viewWillDisappear(animated: Bool) {
+    open override func viewWillDisappear(_ animated: Bool) {
         session_async{
-            if self.setupResult == .Success{
+            if self.setupResult == .success{
                 self.session.stopRunning()
             }
         }
@@ -260,19 +260,19 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
         super.viewDidDisappear(animated)
     }
    
-    override public func viewDidDisappear(animated: Bool) {
+    override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         stopScanning()
     }
     
     
-    public override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        return .All
+    open override var supportedInterfaceOrientations : UIInterfaceOrientationMask {
+        return .all
     }
     
-    public override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
-        let deviceOrientation = UIDevice.currentDevice().orientation
+    open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        let deviceOrientation = UIDevice.current.orientation
         if deviceOrientation.isPortrait || deviceOrientation.isLandscape{
             if let orientation = AVCaptureVideoOrientation(rawValue: deviceOrientation.rawValue){
                 previewView.previewLayer?.connection.videoOrientation = orientation
@@ -293,18 +293,18 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
 
     
     
-    func session_async(block:dispatch_block_t){
-        dispatch_async(self.sessionQueue, block)
+    func session_async(_ block:@escaping ()->()){
+        self.sessionQueue.async(execute: block)
     }
     
     func startScanningUI(){
-        scanFeedbackView.hidden = false
+        scanFeedbackView.isHidden = false
         scanFeedbackView.animateScanLine()
-        self.view.sendSubviewToBack(previewView)
+        self.view.sendSubview(toBack: previewView)
     }
     
     func stopScanningUI(){
-        scanFeedbackView.hidden = true
+        scanFeedbackView.isHidden = true
         scanFeedbackView.stopScanLineAnimation()
         
     }
@@ -312,25 +312,25 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
     
     // MARK: Capture Manager
     
-    func deviceWithMediaType(mediaType:String,preferringPosition:AVCaptureDevicePosition) -> AVCaptureDevice?{
-        let devices = AVCaptureDevice.devicesWithMediaType(mediaType)
-        for obj in devices{
+    func deviceWithMediaType(_ mediaType:String,preferringPosition:AVCaptureDevicePosition) -> AVCaptureDevice?{
+        let devices = AVCaptureDevice.devices(withMediaType: mediaType)
+        for obj in devices!{
             if let device = obj as? AVCaptureDevice{
                 if device.position == preferringPosition{
                     return device
                 }
             }
         }
-        return devices.first as? AVCaptureDevice
+        return devices?.first as? AVCaptureDevice
     }
     
 
     
     // MARK : AVCaptureMetadataOutputObjectsDelegate
     var isRecognized = false
-    public func captureOutput(captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [AnyObject]!, fromConnection connection: AVCaptureConnection!) {
+    open func captureOutput(_ captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [Any]!, from connection: AVCaptureConnection!) {
         if let metadataObject = metadataObjects.first as? AVMetadataMachineReadableCodeObject
-            where self.scanCodeTypes.contains(metadataObject.type){
+            , self.scanCodeTypes.contains(metadataObject.type){
                 NSLog("scan result type:\(metadataObject.type) content:\(metadataObject.stringValue)")
                 self.stopScanning()
                 // 如果不在这里马上停止,那么此结果,因为扫描成功之后,还会有多次回调.
@@ -349,16 +349,16 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
         }
     }
     
-    func onCodeRecognized(codeString:String){
+    func onCodeRecognized(_ codeString:String){
         audioPlayer?.play()
         self.delegate?.codeScanViewController(self, didRecognizeCode: codeString)
         closeSelf()
     }
     
     func closeSelf(){
-      let poped = self.navigationController?.popViewControllerAnimated(true)
+      let poped = self.navigationController?.popViewController(animated: true)
       if poped == nil{
-        dismissViewControllerAnimated(true, completion: nil)
+        dismiss(animated: true, completion: nil)
       }
     }
     
@@ -370,11 +370,11 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
     
     var audioPlayer:AVAudioPlayer?
     func loadQRCodeCompletedSound(){
-        let assetBundle = NSBundle.mainBundle()
-      guard let soundURL = assetBundle.URLForResource("qrcode_completed", withExtension: "mp3")   else{
+        let assetBundle = Bundle.main
+      guard let soundURL = assetBundle.url(forResource: "qrcode_completed", withExtension: "mp3")   else{
         return
       }
-        audioPlayer = try? AVAudioPlayer(contentsOfURL: soundURL)
+        audioPlayer = try? AVAudioPlayer(contentsOf: soundURL)
         if audioPlayer == nil{
             NSLog("unable to read qrcode_completed file")
         }else{
@@ -385,13 +385,13 @@ public class BXCodeScanViewController:UIViewController,AVCaptureMetadataOutputOb
     
     
     // MARK: State Restoration
-    public override func encodeRestorableStateWithCoder(coder: NSCoder) {
-        super.encodeRestorableStateWithCoder(coder)
-        coder.encodeBool(sessionRunning, forKey: BXCoderKey.sessionRunning)
+    open override func encodeRestorableState(with coder: NSCoder) {
+        super.encodeRestorableState(with: coder)
+        coder.encode(sessionRunning, forKey: BXCoderKey.sessionRunning)
     }
     
-    public override func decodeRestorableStateWithCoder(coder: NSCoder) {
-        super.decodeRestorableStateWithCoder(coder)
+    open override func decodeRestorableState(with coder: NSCoder) {
+        super.decodeRestorableState(with: coder)
     }
     
 }

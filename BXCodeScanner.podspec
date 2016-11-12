@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "BXCodeScanner"
-  s.version          = "0.1.5"
+  s.version          = "1.0.0"
   s.summary          = " BXCodeScanner is QRCode and BarCode Scanner,and A Simple Example Picture Capture"
 
 # This description is used to generate tags and improve search results.
@@ -35,5 +35,5 @@ Pod::Spec.new do |s|
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
-    s.dependency 'PinAuto'
+    s.dependency 'PinAuto', '~>2.0'
 end

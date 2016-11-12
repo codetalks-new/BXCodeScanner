@@ -10,7 +10,7 @@ import Foundation
 
 func currentAppName() ->String?{
     let bundleNameKey = String(kCFBundleNameKey)
-    return NSBundle.mainBundle().infoDictionary?[bundleNameKey] as? String
+    return Bundle.main.infoDictionary?[bundleNameKey] as? String
 }
 
 struct BXStrings{
@@ -22,55 +22,55 @@ struct BXStrings{
 }
 
 enum BXCodeSetupResult:Int{
-    case NoDevice
-    case Success
-    case NotAuthorized
-    case SessionconfigurationFailed
+    case noDevice
+    case success
+    case notAuthorized
+    case sessionconfigurationFailed
 }
 
-internal func runInUiThread(block:dispatch_block_t){
-    dispatch_async(dispatch_get_main_queue(), block)
+internal func runInUiThread(_ block:@escaping ()->()){
+    DispatchQueue.main.async(execute: block)
 }
 
 extension UIViewController{
     
     // MARK: UI Helper
-    func showTip(tip:String){
-        let alert = UIAlertController(title: "提示", message: tip, preferredStyle: .Alert)
-        alert.addAction(UIAlertAction(title: "知道了", style: .Default, handler: nil))
-        presentViewController(alert, animated: true, completion: nil)
+    func showTip(_ tip:String){
+        let alert = UIAlertController(title: "提示", message: tip, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
         
     }
     
     func promptNotAuthorized(){
         let message = BXStrings.camera_permission_tip
         let bundleNameKey = String(kCFBundleNameKey)
-        let title = NSBundle.mainBundle().infoDictionary?[bundleNameKey] as? String ?? "提示"
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+        let title = Bundle.main.infoDictionary?[bundleNameKey] as? String ?? "提示"
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
-        alert.addAction(UIAlertAction(title: "确定", style: .Cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "设置", style: .Default){
+        alert.addAction(UIAlertAction(title: "确定", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "设置", style: .default){
             action in
-            UIApplication.sharedApplication().openURL(NSURL(string: UIApplicationOpenSettingsURLString)!)
+            UIApplication.shared.openURL(URL(string: UIApplicationOpenSettingsURLString)!)
             })
-        presentViewController(alert, animated: true, completion: nil)
+        present(alert, animated: true, completion: nil)
     }
     
     
 }
 
 extension UIImage{
-    static func circleImageWithColor(color:UIColor,radius:CGFloat=22) -> UIImage{
+    static func circleImageWithColor(_ color:UIColor,radius:CGFloat=22) -> UIImage{
         let rect = CGRect(x: 0, y: 0, width: radius * 2, height: radius * 2)
         UIGraphicsBeginImageContextWithOptions(rect.size, false, 0)
         let ctx = UIGraphicsGetCurrentContext()
-        UIColor.clearColor().setFill()
-        CGContextFillRect(ctx, rect)
-        let path = UIBezierPath(ovalInRect: rect)
+        UIColor.clear.setFill()
+        ctx?.fill(rect)
+        let path = UIBezierPath(ovalIn: rect)
         color.setFill()
         path.fill()
         let img = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        return img
+        return img!
     }
 }

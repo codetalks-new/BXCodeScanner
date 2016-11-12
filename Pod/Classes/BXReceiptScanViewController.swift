@@ -12,11 +12,11 @@ import PinAuto
 
 @objc
 public protocol BXReceiptScanViewControllerDelegate{
-  func receiptScanViewController(viewController:BXReceiptScanViewController,didCaptureImage data:NSData)
-  optional func receiptScanViewControllerDidCanceled(viewController:BXReceiptScanViewController)
+  func receiptScanViewController(_ viewController:BXReceiptScanViewController,didCaptureImage data:Data)
+  @objc optional func receiptScanViewControllerDidCanceled(_ viewController:BXReceiptScanViewController)
 }
 
-public class BXReceiptScanViewController: UIViewController {
+open class BXReceiptScanViewController: UIViewController {
   
   public init() {
     super.init(nibName: nil, bundle: nil)
@@ -26,19 +26,19 @@ public class BXReceiptScanViewController: UIViewController {
     super.init(coder: aDecoder)
   }
   
-  public let scanFeedbackView = BXScanFeedbackView()
-  public let scanTipLabel = UILabel()
+  open let scanFeedbackView = BXScanFeedbackView()
+  open let scanTipLabel = UILabel()
   
-  public let cameraButton = UIButton(type: .System)
-  public let flashButton = UIButton(type: .System)
-  public let cancelButton = UIButton(type: .System)
-  public let showExampleButton = UIButton(type: .System)
-  public let exampleImageView = UIImageView(frame: CGRectZero)
+  open let cameraButton = UIButton(type: .system)
+  open let flashButton = UIButton(type: .system)
+  open let cancelButton = UIButton(type: .system)
+  open let showExampleButton = UIButton(type: .system)
+  open let exampleImageView = UIImageView(frame: CGRect.zero)
   
-  public weak var delegate:BXReceiptScanViewControllerDelegate?
+  open weak var delegate:BXReceiptScanViewControllerDelegate?
   
   
-  public override func loadView() {
+  open override func loadView() {
     super.loadView()
     for childView in [previewView,scanFeedbackView,exampleImageView, scanTipLabel,cameraButton,flashButton,cancelButton,showExampleButton]{
       self.view.addSubview(childView)
@@ -47,31 +47,31 @@ public class BXReceiptScanViewController: UIViewController {
     // Setup
     scanTipLabel.text = BXStrings.scan_receipt_tip
     scanTipLabel.textColor = self.view.tintColor
-    scanTipLabel.font = UIFont.boldSystemFontOfSize(16)
+    scanTipLabel.font = UIFont.boldSystemFont(ofSize: 16)
     
-    exampleImageView.hidden = true
-    exampleImageView.backgroundColor = UIColor.greenColor()
+    exampleImageView.isHidden = true
+    exampleImageView.backgroundColor = UIColor.green
     
-    cameraButton.setTitle("拍摄", forState: .Normal)
-    showExampleButton.setTitle("示例", forState: .Normal)
-    flashButton.setTitle("闪光", forState: .Normal)
-    cancelButton.setTitle("取消", forState: .Normal)
+    cameraButton.setTitle("拍摄", for: UIControlState())
+    showExampleButton.setTitle("示例", for: UIControlState())
+    flashButton.setTitle("闪光", for: UIControlState())
+    cancelButton.setTitle("取消", for: UIControlState())
     
-    let lgButtonImage = UIImage.circleImageWithColor(UIColor.grayColor(), radius: 28)
-    let normalButtonImage = UIImage.circleImageWithColor(UIColor.grayColor(), radius: 22)
+    let lgButtonImage = UIImage.circleImageWithColor(UIColor.gray, radius: 28)
+    let normalButtonImage = UIImage.circleImageWithColor(UIColor.gray, radius: 22)
     
-    cameraButton.setBackgroundImage(lgButtonImage, forState: .Normal)
-    showExampleButton.setBackgroundImage(lgButtonImage, forState: .Normal)
-    flashButton.setBackgroundImage(normalButtonImage, forState: .Normal)
+    cameraButton.setBackgroundImage(lgButtonImage, for: UIControlState())
+    showExampleButton.setBackgroundImage(lgButtonImage, for: UIControlState())
+    flashButton.setBackgroundImage(normalButtonImage, for: UIControlState())
     
     for button in [cameraButton,showExampleButton,flashButton,cancelButton]{
-      button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+      button.setTitleColor(UIColor.white, for: UIControlState())
     }
     
-    cameraButton.addTarget(self, action: #selector(BXReceiptScanViewController.takePicture(_:)), forControlEvents: .TouchUpInside)
-    showExampleButton.addTarget(self, action: #selector(BXReceiptScanViewController.toggleShowExample(_:)), forControlEvents: .TouchUpInside)
-    cancelButton.addTarget(self, action: #selector(BXReceiptScanViewController.cancel(_:)), forControlEvents: .TouchUpInside)
-    flashButton.addTarget(self, action: #selector(BXReceiptScanViewController.toggleFlashMode(_:)), forControlEvents: .TouchUpInside)
+    cameraButton.addTarget(self, action: #selector(BXReceiptScanViewController.takePicture(_:)), for: .touchUpInside)
+    showExampleButton.addTarget(self, action: #selector(BXReceiptScanViewController.toggleShowExample(_:)), for: .touchUpInside)
+    cancelButton.addTarget(self, action: #selector(BXReceiptScanViewController.cancel(_:)), for: .touchUpInside)
+    flashButton.addTarget(self, action: #selector(BXReceiptScanViewController.toggleFlashMode(_:)), for: .touchUpInside)
     
     scanFeedbackView.scanLineHidden = true
     
@@ -109,7 +109,7 @@ public class BXReceiptScanViewController: UIViewController {
   }
   
   
-  public override func updateViewConstraints() {
+  open override func updateViewConstraints() {
     super.updateViewConstraints()
     NSLog("\(#function)")
   }
@@ -117,73 +117,73 @@ public class BXReceiptScanViewController: UIViewController {
   
   // MARK: Scan Support Variable
   let previewView = BXPreviewView()
-  let sessionQueue = dispatch_queue_create("session_queue", DISPATCH_QUEUE_SERIAL)
+  let sessionQueue = DispatchQueue(label: "session_queue", attributes: [])
   var videoDeviceInput:AVCaptureDeviceInput?
   var videoDevice:AVCaptureDevice?
   let imageOutput = AVCaptureStillImageOutput()
   var session = AVCaptureSession()
   var sessionRunning = false
-  var setupResult = BXCodeSetupResult.Success
+  var setupResult = BXCodeSetupResult.success
   
   
-  override public func viewDidLoad() {
+  override open func viewDidLoad() {
     super.viewDidLoad()
     // setup session
     previewView.session = session
-    setupResult = .Success
+    setupResult = .success
     previewView.previewLayer?.videoGravity = AVLayerVideoGravityResizeAspectFill
     
     // UI
-    scanTipLabel.textColor = UIColor.whiteColor()
-    let cancelButton = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: #selector(BXReceiptScanViewController.cancel(_:)))
+    scanTipLabel.textColor = UIColor.white
+    let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(BXReceiptScanViewController.cancel(_:)))
     navigationItem.rightBarButtonItem = cancelButton
     
     checkAuthorization()
     setupSession()
   }
   
-  @IBAction func cancel(sender:AnyObject){
+  @IBAction func cancel(_ sender:AnyObject){
     self.delegate?.receiptScanViewControllerDidCanceled?(self)
     closeSelf()
   }
   
-  @IBAction func takePicture(sender:AnyObject){
+  @IBAction func takePicture(_ sender:AnyObject){
     session_async{
-      let connection = self.imageOutput.connectionWithMediaType(AVMediaTypeVideo)
-      self.imageOutput.captureStillImageAsynchronouslyFromConnection(connection){
+      let connection = self.imageOutput.connection(withMediaType: AVMediaTypeVideo)
+      self.imageOutput.captureStillImageAsynchronously(from: connection){
         (buffer,error) in
         if buffer != nil{
           let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(buffer)
           runInUiThread{
-            self.didCapturedStillImage(imageData)
+            self.didCapturedStillImage(imageData!)
           }
         }else{
-          NSLog("Could not capture still image %@",error)
+          NSLog("Could not capture still image \(error)")
         }
       }
       
     }
   }
   
-  func didCapturedStillImage(imageData:NSData){
+  func didCapturedStillImage(_ imageData:Data){
     self.delegate?.receiptScanViewController(self, didCaptureImage: imageData)
     closeSelf()
   }
   
-  @IBAction func toggleShowExample(sender:AnyObject){
-    let oldValue = exampleImageView.hidden
-    exampleImageView.hidden = !oldValue
+  @IBAction func toggleShowExample(_ sender:AnyObject){
+    let oldValue = exampleImageView.isHidden
+    exampleImageView.isHidden = !oldValue
   }
   
-  @IBAction func toggleFlashMode(sender:AnyObject){
+  @IBAction func toggleFlashMode(_ sender:AnyObject){
     guard let videoDevice = videoDevice else {
       return
     }
-    if !(videoDevice.hasFlash && videoDevice.flashAvailable){
+    if !(videoDevice.hasFlash && videoDevice.isFlashAvailable){
       return
     }
     var availabelModes = Set<AVCaptureFlashMode>()
-    for mode in [AVCaptureFlashMode.Auto,.Off,.On]{
+    for mode in [AVCaptureFlashMode.auto,.off,.on]{
       if videoDevice.isFlashModeSupported(mode){
         availabelModes.insert(mode)
       }
@@ -197,9 +197,9 @@ public class BXReceiptScanViewController: UIViewController {
     
     var label = ""
     switch mode{
-    case .On:label = "On"
-    case .Off:label = "Off"
-    case .Auto:label = "Auto"
+    case .on:label = "On"
+    case .off:label = "Off"
+    case .auto:label = "Auto"
     }
     session_async{
       do{
@@ -215,18 +215,18 @@ public class BXReceiptScanViewController: UIViewController {
       videoDevice.unlockForConfiguration()
     }
     
-    flashButton.setTitle(label, forState: .Normal)
+    flashButton.setTitle(label, for: UIControlState())
   }
   
   
   
   func setupSession(){
     session_async{
-      if self.setupResult != .Success{
+      if self.setupResult != .success{
         return
       }
-      guard let videoDevice = self.deviceWithMediaType(AVMediaTypeVideo, preferringPosition: AVCaptureDevicePosition.Back) else {
-        self.setupResult = .NoDevice
+      guard let videoDevice = self.deviceWithMediaType(AVMediaTypeVideo, preferringPosition: AVCaptureDevicePosition.back) else {
+        self.setupResult = .noDevice
         return
       }
       self.videoDevice = videoDevice
@@ -243,16 +243,16 @@ public class BXReceiptScanViewController: UIViewController {
         self.videoDeviceInput = videoDeviceInput
         
         runInUiThread{
-          let statusBarOrientation = UIApplication.sharedApplication().statusBarOrientation
-          var initialVideoOrientation = AVCaptureVideoOrientation.Portrait
-          if statusBarOrientation != .Unknown{
+          let statusBarOrientation = UIApplication.shared.statusBarOrientation
+          var initialVideoOrientation = AVCaptureVideoOrientation.portrait
+          if statusBarOrientation != .unknown{
             initialVideoOrientation = AVCaptureVideoOrientation(rawValue: statusBarOrientation.rawValue)!
           }
           self.previewView.previewLayer?.connection.videoOrientation = initialVideoOrientation
         }
       }else{
         NSLog("Could not add video deviceinput to the session")
-        self.setupResult = BXCodeSetupResult.SessionconfigurationFailed
+        self.setupResult = BXCodeSetupResult.sessionconfigurationFailed
       }
       NSLog("session preset \(self.session.sessionPreset)")
       
@@ -261,7 +261,7 @@ public class BXReceiptScanViewController: UIViewController {
         self.session.addOutput(self.imageOutput)
       }else{
         NSLog("Could not add imageOutput to the session")
-        self.setupResult = BXCodeSetupResult.SessionconfigurationFailed
+        self.setupResult = BXCodeSetupResult.sessionconfigurationFailed
       }
       
       self.session.commitConfiguration()
@@ -270,48 +270,48 @@ public class BXReceiptScanViewController: UIViewController {
   }
   
   func checkAuthorization(){
-    let status = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
+    let status = AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
     switch status{
-    case .Authorized:
-      if setupResult != .Success{
+    case .authorized:
+      if setupResult != .success{
         setupSession()
       }
       break
-    case .NotDetermined:
+    case .notDetermined:
       promptAuthorize()
     default:
-      setupResult = .NotAuthorized // Deny or Restricted
+      setupResult = .notAuthorized // Deny or Restricted
     }
   }
   
   func promptAuthorize(){
-    dispatch_suspend(sessionQueue)
-    AVCaptureDevice.requestAccessForMediaType(AVMediaTypeVideo){
+    sessionQueue.suspend()
+    AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo){
       granted in
       if !granted{
-        self.setupResult = BXCodeSetupResult.NotAuthorized
+        self.setupResult = BXCodeSetupResult.notAuthorized
       }
-      dispatch_resume(self.sessionQueue)
+      self.sessionQueue.resume()
     }
   }
   
-  public override func viewWillAppear(animated: Bool) {
+  open override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
     checkAuthorization() // authorization can be change we we are not in front
-    dispatch_async(self.sessionQueue){
+    self.sessionQueue.async{
       switch self.setupResult{
-      case .Success:
+      case .success:
         self.session.startRunning()
-        self.sessionRunning = self.session.running
-      case .NotAuthorized:
+        self.sessionRunning = self.session.isRunning
+      case .notAuthorized:
         runInUiThread{
           self.promptNotAuthorized()
         }
-      case .NoDevice:
+      case .noDevice:
         runInUiThread{
           self.showTip(BXStrings.error_no_device)
         }
-      case .SessionconfigurationFailed:
+      case .sessionconfigurationFailed:
         runInUiThread{
           self.showTip(BXStrings.error_session_failed)
         }
@@ -319,16 +319,16 @@ public class BXReceiptScanViewController: UIViewController {
     }
   }
   
-  public override func viewDidAppear(animated: Bool) {
+  open override func viewDidAppear(_ animated: Bool) {
     super.viewDidDisappear(animated)
-    if self.setupResult == .Success && self.sessionRunning{
+    if self.setupResult == .success && self.sessionRunning{
       startScanningUI()
     }
   }
   
-  public override func viewWillDisappear(animated: Bool) {
+  open override func viewWillDisappear(_ animated: Bool) {
     session_async{
-      if self.setupResult == .Success{
+      if self.setupResult == .success{
         self.session.stopRunning()
       }
     }
@@ -336,24 +336,24 @@ public class BXReceiptScanViewController: UIViewController {
     super.viewDidDisappear(animated)
   }
   
-  override public func viewDidDisappear(animated: Bool) {
+  override open func viewDidDisappear(_ animated: Bool) {
     super.viewDidDisappear(animated)
     stopScanning()
   }
   
   // MARK: Landscape Support
   
-  public override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-    return .Landscape
+  open override var supportedInterfaceOrientations : UIInterfaceOrientationMask {
+    return .landscape
   }
   
-  public override func shouldAutorotate() -> Bool {
+  open override var shouldAutorotate : Bool {
     return false
   }
   
-  public override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
-    super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
-    let deviceOrientation = UIDevice.currentDevice().orientation
+  open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    super.viewWillTransition(to: size, with: coordinator)
+    let deviceOrientation = UIDevice.current.orientation
     if deviceOrientation.isPortrait || deviceOrientation.isLandscape{
       if let orientation = AVCaptureVideoOrientation(rawValue: deviceOrientation.rawValue){
         previewView.previewLayer?.connection.videoOrientation = orientation
@@ -374,21 +374,21 @@ public class BXReceiptScanViewController: UIViewController {
   
   
   
-  func session_async(block:dispatch_block_t){
-    dispatch_async(self.sessionQueue, block)
+  func session_async(_ block:@escaping ()->()){
+    self.sessionQueue.async(execute: block)
   }
   
   func startScanningUI(){
-    scanFeedbackView.hidden = false
-    self.view.sendSubviewToBack(previewView)
+    scanFeedbackView.isHidden = false
+    self.view.sendSubview(toBack: previewView)
   }
   
   func stopScanningUI(){
-    scanFeedbackView.hidden = true
+    scanFeedbackView.isHidden = true
     
   }
   
-  public override func viewDidLayoutSubviews() {
+  open override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
     NSLog("\(#function)")
   }
@@ -408,25 +408,25 @@ public class BXReceiptScanViewController: UIViewController {
   
   // MARK: Capture Manager
   
-  func deviceWithMediaType(mediaType:String,preferringPosition:AVCaptureDevicePosition) -> AVCaptureDevice?{
-    let devices = AVCaptureDevice.devicesWithMediaType(mediaType)
-    for obj in devices{
+  func deviceWithMediaType(_ mediaType:String,preferringPosition:AVCaptureDevicePosition) -> AVCaptureDevice?{
+    let devices = AVCaptureDevice.devices(withMediaType: mediaType)
+    for obj in devices!{
       if let device = obj as? AVCaptureDevice{
         if device.position == preferringPosition{
           return device
         }
       }
     }
-    return devices.first as? AVCaptureDevice
+    return devices?.first as? AVCaptureDevice
   }
   
   
   
   func closeSelf(){
     if let navCtrl = self.navigationController{
-      navCtrl.popViewControllerAnimated(true)
+      navCtrl.popViewController(animated: true)
     }else{
-      dismissViewControllerAnimated(true, completion: nil)
+      dismiss(animated: true, completion: nil)
     }
   }
   
@@ -434,12 +434,12 @@ public class BXReceiptScanViewController: UIViewController {
   
   
   // MARK: State Restoration
-  public override func encodeRestorableStateWithCoder(coder: NSCoder) {
-    super.encodeRestorableStateWithCoder(coder)
-    coder.encodeBool(sessionRunning, forKey: BXCoderKey.sessionRunning)
+  open override func encodeRestorableState(with coder: NSCoder) {
+    super.encodeRestorableState(with: coder)
+    coder.encode(sessionRunning, forKey: BXCoderKey.sessionRunning)
   }
   
-  public override func decodeRestorableStateWithCoder(coder: NSCoder) {
-    super.decodeRestorableStateWithCoder(coder)
+  open override func decodeRestorableState(with coder: NSCoder) {
+    super.decodeRestorableState(with: coder)
   }
 }

@@ -15,8 +15,8 @@ class ViewController: UIViewController,BXCodeScanViewControllerDelegate,BXReceip
     @IBOutlet weak var scanResultLabel: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
-        scanResultLabel.hidden = true
-        capturedImageView.hidden = true
+        scanResultLabel.isHidden = true
+        capturedImageView.isHidden = true
     }
 
     override func didReceiveMemoryWarning() {
@@ -24,47 +24,47 @@ class ViewController: UIViewController,BXCodeScanViewControllerDelegate,BXReceip
         // Dispose of any resources that can be recreated.
     }
 
-    @IBAction func scan(sender: AnyObject) {
+    @IBAction func scan(_ sender: AnyObject) {
        let vc = BXCodeScanViewController()
         vc.delegate = self
-        showViewController(vc, sender: self)
+        show(vc, sender: self)
     }
-    @IBAction func scanReceipt(sender: AnyObject) {
+    @IBAction func scanReceipt(_ sender: AnyObject) {
         let vc = BXReceiptScanViewController()
         vc.delegate = self
-        presentViewController(vc, animated: true, completion: nil)
+        present(vc, animated: true, completion: nil)
     }
     
-    func codeScanViewControllerDidCanceled(viewController: BXCodeScanViewController) {
-        scanResultLabel.hidden = false
+    func codeScanViewControllerDidCanceled(_ viewController: BXCodeScanViewController) {
+        scanResultLabel.isHidden = false
         scanResultLabel.text = "扫码取消了"
     }
     
-    func codeScanViewController(viewController: BXCodeScanViewController, didRecognizeCode code: String) {
+    func codeScanViewController(_ viewController: BXCodeScanViewController, didRecognizeCode code: String) {
         updateScanResult(code)
     }
     
-    func receiptScanViewController(viewController: BXReceiptScanViewController, didCaptureImage data: NSData) {
+    func receiptScanViewController(_ viewController: BXReceiptScanViewController, didCaptureImage data: Data) {
         capturedImageView.image = UIImage(data: data)
-        capturedImageView.hidden = false
+        capturedImageView.isHidden = false
     }
     
     
-    func updateScanResult(qrcodeString:String){
+    func updateScanResult(_ qrcodeString:String){
         // Set Result Label
         let attributedString = NSMutableAttributedString()
         let resultLabelString = NSAttributedString(string: "扫码结果:", attributes: [
-            NSFontAttributeName:UIFont.preferredFontForTextStyle(UIFontTextStyleCaption1),
-            NSForegroundColorAttributeName:UIColor.grayColor()
+            NSFontAttributeName:UIFont.preferredFont(forTextStyle: UIFontTextStyle.caption1),
+            NSForegroundColorAttributeName:UIColor.gray
             ])
         let resultString = NSAttributedString(string:qrcodeString,attributes:[
-            NSFontAttributeName:UIFont.preferredFontForTextStyle(UIFontTextStyleBody),
-            NSForegroundColorAttributeName:UIColor.darkTextColor()
+            NSFontAttributeName:UIFont.preferredFont(forTextStyle: UIFontTextStyle.body),
+            NSForegroundColorAttributeName:UIColor.darkText
             ])
-        attributedString.appendAttributedString(resultLabelString)
-        attributedString.appendAttributedString(resultString)
+        attributedString.append(resultLabelString)
+        attributedString.append(resultString)
         scanResultLabel.attributedText = attributedString
-        scanResultLabel.hidden = false
+        scanResultLabel.isHidden = false
     }
     
 }
